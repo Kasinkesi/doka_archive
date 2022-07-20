@@ -24,6 +24,11 @@ if __name__ == '__main__':
     print(compact(('A' * 700 + 'B' * 700 + 'Б').encode()))
     print(compact('AA'.encode()))
     print(compact('AAB'.encode()))
+    print(compact('1'.encode()))
+    print(compact('11'.encode()))
+    print(compact('112'.encode()))
+    print(compact('0044'.encode()))                         #problen
+    print(compact(('4'*202).encode()))                      #problen
     print(compact('Б'.encode()))
     print(compact('ББ'.encode()))
     print(compact('ББЮ'.encode()))
