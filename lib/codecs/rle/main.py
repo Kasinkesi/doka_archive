@@ -29,8 +29,7 @@ class Rle:
             if not count:
                 count = s
             else:
-                for _ in range(count):
-                    res.append(s)
+                res.extend([s]*count)
                 count = None
         return res
 
@@ -50,11 +49,30 @@ class Rle:
         '''must be even line length'''
         input = open(input, 'rb')
         output = open(output, 'wb')
-        while True:
+        line = True
+        while line:
             line = input.read(100)
-            if not line:
-                break
             comp_line = self.decompres(line)
             output.write(comp_line)
         input.close()
         output.close()
+
+
+if __name__ == '__main__':
+    rle = Rle()
+    print(rle.decompres(rle.compres('')))
+    print(rle.compres(('A' * 700 + 'B' * 700 + 'Б').encode()))
+    print(rle.decompres(rle.compres(('A' * 700 + 'B' * 700 + 'Б').encode())))
+    print(rle.decompres(rle.compres('AA'.encode())))
+    print(rle.decompres(rle.compres('AAB'.encode())))
+    print(rle.decompres(rle.compres('1'.encode())))
+    print(rle.decompres(rle.compres('11'.encode())))
+    print(rle.decompres(rle.compres('112'.encode())))
+    print(rle.decompres(rle.compres('0044'.encode())))
+    print(rle.decompres(rle.compres(('4' * 202).encode())))
+    print(rle.decompres(rle.compres('Б'.encode())))
+    print(rle.decompres(rle.compres('ББ'.encode())))
+    print(rle.decompres(rle.compres('ББЮ'.encode())))
+    print(rle.decompres(rle.compres(b'AABAAA')))
+    print(rle.decompres(rle.compres(b'ABC')))
+    print(rle.decompres(rle.compres(b'AAAABBBCCXYZDDDDEEEFFFAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBB')))
