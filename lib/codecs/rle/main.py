@@ -1,10 +1,10 @@
 class Rle:
-    def __init__(self, cnt_max=1000):
-        self.cnt_max = cnt_max
+    def __init__(self, line_length=1000):
+        self.line_length = line_length
 
     def compres(self, array):
         if not array:
-            return ''
+            return b''
 
         cur, count = array[0], 1
         comp_array = bytearray()
@@ -34,22 +34,49 @@ class Rle:
                 count = None
         return res
 
+    def archive(self, input, output):
+        input = open(input, 'rb')
+        output = open(output, 'wb')
+        while True:
+            line = input.read(self.line_length)
+            if not line:
+                break
+            comp_line = self.compres(line)
+            output.write(comp_line)
+        input.close()
+        output.close()
+
+    def dearchive(self, input, output):
+        '''must be even line length'''
+        input = open(input, 'rb')
+        output = open(output, 'wb')
+        while True:
+            line = input.read(100)
+            if not line:
+                break
+            comp_line = self.decompres(line)
+            output.write(comp_line)
+        input.close()
+        output.close()
+
 
 if __name__ == '__main__':
-    rle = Rle()
-    print(rle.decompres(rle.compres('')))
-    print(rle.decompres(rle.compres(('A' * 700 + 'B' * 700 + 'Б').encode())))
-    print(rle.decompres(rle.compres('AA'.encode())))
-    print(rle.decompres(rle.compres('AAB'.encode())))
-    print(rle.decompres(rle.compres('1'.encode())))
-    print(rle.decompres(rle.compres('11'.encode())))
-    print(rle.decompres(rle.compres('112'.encode())))
-    print('problem')
-    print(rle.decompres(rle.compres('0044'.encode())))
-    print(rle.decompres(rle.compres(('4' * 202).encode())))
-    print(rle.decompres(rle.compres('Б'.encode())))
-    print(rle.decompres(rle.compres('ББ'.encode())))
-    print(rle.decompres(rle.compres('ББЮ'.encode())))
-    print(rle.decompres(rle.compres(b'AABAAA')))
-    print(rle.decompres(rle.compres(b'ABC')))
-    print(rle.decompres(rle.compres(b'AAAABBBCCXYZDDDDEEEFFFAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBB')))
+    rle = Rle(3)
+    rle.archive('filetest.txt', 'byte_file.txt')
+    rle.dearchive('byte_file.txt', 'control.txt')
+    # print(rle.decompres(rle.compres('')))
+    # print(rle.decompres(rle.compres(('A' * 700 + 'B' * 700 + 'Б').encode())))
+    # print(rle.decompres(rle.compres('AA'.encode())))
+    # print(rle.decompres(rle.compres('AAB'.encode())))
+    # print(rle.decompres(rle.compres('1'.encode())))
+    # print(rle.decompres(rle.compres('11'.encode())))
+    # print(rle.decompres(rle.compres('112'.encode())))
+    # print('problem')
+    # print(rle.decompres(rle.compres('0044'.encode())))
+    # print(rle.decompres(rle.compres(('4' * 202).encode())))
+    # print(rle.decompres(rle.compres('Б'.encode())))
+    # print(rle.decompres(rle.compres('ББ'.encode())))
+    # print(rle.decompres(rle.compres('ББЮ'.encode())))
+    # print(rle.decompres(rle.compres(b'AABAAA')))
+    # print(rle.decompres(rle.compres(b'ABC')))
+    # print(rle.decompres(rle.compres(b'AAAABBBCCXYZDDDDEEEFFFAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBB')))
