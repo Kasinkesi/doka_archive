@@ -1,0 +1,26 @@
+from lib.codecs.rle.main import Rle
+
+rle = Rle(2000)
+rle.archive('filetest.txt', 'byte_file.txt')
+rle.dearchive('byte_file.txt', 'control.txt')
+rle.archive('test.png', 'byte_file_png.txt')
+rle.dearchive('byte_file_png.txt', 'control.png')
+rle.archive(r'C:\projects\doka_archive\lib\codecs\rle\tests\Noize MC - Работа.mp3', 'byte_file_mp3.txt')
+rle.dearchive('byte_file_mp3.txt', 'control.mp3')
+
+if __name__ == '__main__':
+    print(rle.decompres(rle.compres('')))
+    print(rle.decompres(rle.compres(('A' * 700 + 'B' * 700 + 'Б').encode())))
+    print(rle.decompres(rle.compres('AA'.encode())))
+    print(rle.decompres(rle.compres('AAB'.encode())))
+    print(rle.decompres(rle.compres('1'.encode())))
+    print(rle.decompres(rle.compres('11'.encode())))
+    print(rle.decompres(rle.compres('112'.encode())))
+    print(rle.decompres(rle.compres('0044'.encode())))
+    print(rle.decompres(rle.compres(('4' * 202).encode())))
+    print(rle.decompres(rle.compres('Б'.encode())))
+    print(rle.decompres(rle.compres('ББ'.encode())))
+    print(rle.decompres(rle.compres('ББЮ'.encode())))
+    print(rle.decompres(rle.compres(b'AABAAA')))
+    print(rle.decompres(rle.compres(b'ABC')))
+    print(rle.decompres(rle.compres(b'AAAABBBCCXYZDDDDEEEFFFAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBB')))
