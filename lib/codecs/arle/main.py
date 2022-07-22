@@ -4,6 +4,7 @@ class Rle:
     def __init__(self, line_length=1000, x=100):
         self.line_length = line_length
         self.x = x
+        self.count = None
 
     def compres(self, line):
         if not line:
@@ -52,21 +53,20 @@ class Rle:
         return res
 
     def decompres(self, comp_line):
-        count = None
         res = bytearray()
         for s in comp_line:
-            if not count:
-                count = s
+            if not self.count:
+                self.count = s
             else:
-                if count <= self.x:
-                    res.extend([s] * count)
-                    count = None
-                elif count > self.x + 1:
+                if self.count <= self.x:
+                    res.extend([s] * self.count)
+                    self.count = None
+                elif self.count > self.x + 1:
                     res.append(s)
-                    count -= 1
-                elif count == self.x + 1:
+                    self.count -= 1
+                elif self.count == self.x + 1:
                     res.append(s)
-                    count = None
+                    self.count = None
         return res
 
     def archive(self, input, output):
@@ -86,7 +86,7 @@ class Rle:
         output = open(output, 'wb')
         comp_line = True
         while comp_line:
-            comp_line = input.read()
+            comp_line = input.read(1)
             line = self.decompres(comp_line)
             output.write(line)
         input.close()

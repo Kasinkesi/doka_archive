@@ -1,6 +1,7 @@
 class Rle:
     def __init__(self, line_length=1000):
         self.line_length = line_length
+        self.count = None
 
     def compres(self, array):
         if not array:
@@ -23,14 +24,13 @@ class Rle:
         return comp_array
 
     def decompres(self, byte_line):
-        count = None
         res = bytearray()
         for s in byte_line:
-            if not count:
-                count = s
+            if not self.count:
+                self.count = s
             else:
-                res.extend([s]*count)
-                count = None
+                res.extend([s]*self.count)
+                self.count = None
         return res
 
     def archive(self, input, output):
