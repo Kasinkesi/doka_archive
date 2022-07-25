@@ -81,15 +81,19 @@ class Rle(Codec):
                     cur, count = s, 1
 
     def decompress_stream(self, instream, outstream):
-        comp_line = True
-        while comp_line:
-            comp_line = instream.read(io.DEFAULT_BUFFER_SIZE)
-            for s in comp_line:
-                if not self.count:
-                    self.count = s
-                else:
-                    outstream.write(bytes([s]*self.count))
-                    self.count = None
+        while True:
+            nbytes = instream.read(1)
+            if nbytes:
+                nbytes = ord(nbytes)
+            else:
+                # expected EOF
+                return
+
+            symbol = instream.read(1)
+            if symbol == b'':
+                raise EOFError("Symbol expected")
+
+            outstream.write(symbol * nbytes)
 
 
 if __name__ == '__main__':
