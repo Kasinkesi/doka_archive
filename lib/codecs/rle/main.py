@@ -63,7 +63,6 @@ class Rle(Codec):
         return b"rle"
 
     def compress_stream(self, instream, outstream):
-        res = bytearray()
         while True:
             line = instream.read(io.DEFAULT_BUFFER_SIZE)
             if not line:
@@ -72,28 +71,25 @@ class Rle(Codec):
             for s in list(line[1:]) + [None]:
                 if s == cur:
                     if count == 255:
-                        res.append(count)
-                        res.append(cur)
+                        outstream.write(bytes([count]))
+                        outstream.write(bytes([cur]))
                         count = 0
                     count += 1
                 else:
-                    res.append(count)
-                    res.append(cur)
+                    outstream.write(bytes([count]))
+                    outstream.write(bytes([cur]))
                     cur, count = s, 1
-        outstream.write(res)
 
     def decompress_stream(self, instream, outstream):
         comp_line = True
-        res = bytearray()
         while comp_line:
             comp_line = instream.read(io.DEFAULT_BUFFER_SIZE)
             for s in comp_line:
                 if not self.count:
                     self.count = s
                 else:
-                    res.extend([s] * self.count)
+                    outstream.write(bytes([s]*self.count))
                     self.count = None
-        outstream.write(res)
 
 
 if __name__ == '__main__':
