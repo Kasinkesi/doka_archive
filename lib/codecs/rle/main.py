@@ -63,42 +63,44 @@ class Rle(Codec):
         return b"rle"
 
     def compress_stream(self, instream, outstream):
-        line = instream.read()
-        if not line:
-            return b''
-
-        cur, count = line[0], 1
         res = bytearray()
-
-        for s in list(line[1:]) + [None]:
-            if s == cur:
-                if count == 255:
+        while True:
+            line = instream.read(io.DEFAULT_BUFFER_SIZE)
+            if not line:
+                break
+            cur, count = line[0], 1
+            for s in list(line[1:]) + [None]:
+                if s == cur:
+                    if count == 255:
+                        res.append(count)
+                        res.append(cur)
+                        count = 0
+                    count += 1
+                else:
                     res.append(count)
                     res.append(cur)
-                    count = 0
-                count += 1
-            else:
-                res.append(count)
-                res.append(cur)
-                cur, count = s, 1
+                    cur, count = s, 1
         outstream.write(res)
 
     def decompress_stream(self, instream, outstream):
-        comp_line = instream.read()
+        comp_line = True
         res = bytearray()
-        for s in comp_line:
-            if not self.count:
-                self.count = s
-            else:
-                res.extend([s] * self.count)
-                self.count = None
+        while comp_line:
+            comp_line = instream.read(io.DEFAULT_BUFFER_SIZE)
+            for s in comp_line:
+                if not self.count:
+                    self.count = s
+                else:
+                    res.extend([s] * self.count)
+                    self.count = None
         outstream.write(res)
 
 
 if __name__ == '__main__':
     rle = Rle()
+    print(io.DEFAULT_BUFFER_SIZE)
     print(rle.decompress(rle.compress(b'')))
-    rle.compress(('A' * 700 + 'B' * 700 + 'Б').encode())
+    print(rle.compress(('A' * 700 + 'B' * 700 + 'Б').encode()))
     print(rle.decompress(rle.compress(('A' * 700 + 'B' * 700 + 'Б').encode())))
     print(rle.decompress(rle.compress('AA'.encode())))
     print(rle.decompress(rle.compress('AAB'.encode())))
