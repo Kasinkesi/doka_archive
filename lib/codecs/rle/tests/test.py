@@ -1,4 +1,6 @@
-from ..rle import *
+# relative import:
+# from ..rle import *
+from lib.codecs.rle.rle import *
 
 rle = Rle()
 rle.compress_file(r'C:\projects\doka_archive\tests\data\filetest.txt', r'C:\projects\doka_archive\tests\data\bytefile.txt')

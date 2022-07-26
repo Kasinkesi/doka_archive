@@ -1,9 +1,10 @@
-from ..codec import *
+# relative import:
+# from ..codec import *
+from lib.codecs.codec import *
 
 class Rle(Codec):
-    def __init__(self, some_parametr=1000):
-        self.some_parametr = some_parametr
-        self.count = None
+    def __init__(self):
+        pass
 
     @property
     def magic(self):
@@ -47,18 +48,18 @@ if __name__ == '__main__':
     rle = Rle()
     print(io.DEFAULT_BUFFER_SIZE)
     print(rle.decompress(rle.compress(b'')))
-    print(rle.compress(('A' * 700 + 'B' * 700 + 'Б').encode()))
-    print(rle.decompress(rle.compress(('A' * 700 + 'B' * 700 + 'Б').encode())))
-    print(rle.decompress(rle.compress('AA'.encode())))
-    print(rle.decompress(rle.compress('AAB'.encode())))
-    print(rle.decompress(rle.compress('0044'.encode())))
-    print(rle.decompress(rle.compress(('4' * 202).encode())))
-    print(rle.decompress(rle.compress('Б'.encode())))
-    print(rle.decompress(rle.compress('ББ'.encode())))
-    print(rle.decompress(rle.compress('ББЮ'.encode())))
-    print(rle.decompress(rle.compress(b'AABAAA')))
-    print(rle.decompress(rle.compress(b'ABC')))
-    print(rle.decompress(rle.compress(b'AAAABBBCCXYZDDDDEEEFFFAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBB')))
+    print(rle.compress(('A' * 50 + 'B' * 700 + 'Б').encode()))
+    print(rle.decompress(rle.compress(('A' * 50 + 'B' * 700 + 'Б').encode())))
+    # print(rle.decompress(rle.compress('AA'.encode())))
+    # print(rle.decompress(rle.compress('AAB'.encode())))
+    # print(rle.decompress(rle.compress('0044'.encode())))
+    # print(rle.decompress(rle.compress(('4' * 202).encode())))
+    # print(rle.decompress(rle.compress('Б'.encode())))
+    # print(rle.decompress(rle.compress('ББ'.encode())))
+    # print(rle.decompress(rle.compress('ББЮ'.encode())))
+    # print(rle.decompress(rle.compress(b'AABAAA')))
+    # print(rle.decompress(rle.compress(b'ABC')))
+    # print(rle.decompress(rle.compress(b'AAAABBBCCXYZDDDDEEEFFFAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBB')))
     # rle.compress_file('filetest.txt', 'bytefile.txt')
     # rle.decompress_file('bytefile.txt', 'control.txt')
     # rle.compress_file('test.png', 'bytefile_png.txt')
