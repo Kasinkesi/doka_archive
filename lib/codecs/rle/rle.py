@@ -69,6 +69,7 @@ if __name__ == '__main__':
     # rle.decompress_file('bytefile_mp3.txt', 'control.mp3')
     # try:
     #     rle.decompress_file('broken_bytefile.txt', 'broken_control.txt')
-    # except MagicMismatchError:
+    # except MagicMismatchError as x:
+    #     print(x):
     #     print(sys.exc_info()[0:2])
 
