@@ -1,6 +1,7 @@
 # relative import:
-# from ..codec import *
-from lib.codecs.codec import *
+from ..codec import *
+# pycharm import:
+# from lib.codecs.codec import *
 
 class Rle(Codec):
     def __init__(self):

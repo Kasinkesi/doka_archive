@@ -1,15 +1,17 @@
 # relative import:
-# from ..codec import *
-from lib.codecs.codec import *
+from ..codec import *
+# pycharm import:
+# from lib.codecs.codec import *
 
-class Rle(Codec):
-    def __init__(self, x=150):
+
+class Arle(Codec):
+    """ x from 2 to 254"""
+    def __init__(self, x=127):
         self.x = x
-        self.count = None
 
     @property
     def magic(self):
-        return b"rle"
+        return b"arle"
 
     def compress_stream(self, instream, outstream):
         while True:
@@ -22,27 +24,21 @@ class Rle(Codec):
             for s in list(line[1:]) + [None]:
                 if s == cur:
                     if count == self.x:
-                        outstream.write(bytes([count]))
-                        outstream.write(bytes([cur]))
+                        outstream.write(bytes([count] + [cur]))
                         count = 0
                     elif sub_line:
-                        outstream.write(bytes([count]))
-                        outstream.write(sub_line)
+                        outstream.write(bytes([count]) + sub_line)
                         count = 1
                         sub_line = bytearray()
                     count += 1
                 else:
                     if count > 1 and count < self.x + 1:
-                        outstream.write(bytes([count]+[cur]))
-                        # outstream.write(bytes([cur]))
+                        outstream.write(bytes([count] + [cur]))
                         cur, count = s, 1
                     elif count == 255:
-                        outstream.write(bytes([count])+sub_line)
-                        # outstream.write(sub_line)
+                        outstream.write(bytes([count]) + sub_line)
                         count = self.x + 1
-                        sub_line = bytearray()  # how?
-                        sub_line.append(cur)
-                        # sub_line = bytearray(str(cur), 'UTF-8')
+                        sub_line = bytearray(bytes([cur]))
                     elif not sub_line:
                         sub_line.append(cur)
                         count = self.x + 1
@@ -52,8 +48,7 @@ class Rle(Codec):
                 cur = s
 
             if sub_line:
-                outstream.write(bytes([count]))
-                outstream.write(sub_line)
+                outstream.write(bytes([count]) + sub_line)
 
     def decompress_stream(self, instream, outstream):
         while True:
@@ -78,23 +73,32 @@ class Rle(Codec):
                 outstream.write(line)
 
 
-
 if __name__ == '__main__':
-    rle = Rle()
+    arle = Arle()
     print(io.DEFAULT_BUFFER_SIZE)
-    print(rle.decompress(rle.compress(b'')))
-    print(rle.compress(('A' * 700 + 'B' * 7 + 'Б').encode()))
-    print(rle.compress('Б'.encode()))
-    print(rle.compress(b'ABC'))
-    print(rle.decompress(rle.compress(('A' * 700 + 'B' * 700 + 'Б').encode())))
-    print(rle.compress('AA'.encode()))
-    print(rle.decompress(rle.compress('AA'.encode())))
-    print(rle.decompress(rle.compress('AAB'.encode())))
-    print(rle.decompress(rle.compress('0044'.encode())))
-    print(rle.decompress(rle.compress(('4' * 202).encode())))
-    print(rle.decompress(rle.compress('Б'.encode())))
-    print(rle.decompress(rle.compress('ББ'.encode())))
-    print(rle.decompress(rle.compress('ББЮ'.encode())))
-    print(rle.decompress(rle.compress(b'AABAAA')))
-    print(rle.decompress(rle.compress(b'ABC')))
-    print(rle.decompress(rle.compress(b'AAAABBBCCXYZDDDDEEEFFFAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBB')))
+    print(arle.decompress(arle.compress(b'')))
+    print(arle.compress(('A' * 700 + 'B' * 7 + 'Б').encode()))
+    print(arle.compress('Б'.encode()))
+    print(arle.compress(b'ABC'))
+    print(arle.decompress(arle.compress(('A' * 700 + 'B' * 700 + 'Б').encode())))
+    print(arle.compress('AA'.encode()))
+    print(arle.decompress(arle.compress('AA'.encode())))
+    print(arle.decompress(arle.compress('AAB'.encode())))
+    print(arle.decompress(arle.compress('0044'.encode())))
+    print(arle.decompress(arle.compress(('4' * 202).encode())))
+    print(arle.decompress(arle.compress('Б'.encode())))
+    print(arle.decompress(arle.compress('ББ'.encode())))
+    print(arle.decompress(arle.compress('ББЮ'.encode())))
+    print(arle.decompress(arle.compress(b'AABAAA')))
+    print(arle.decompress(arle.compress(b'ABC')))
+    print(arle.decompress(arle.compress(b'AAAABBBCCXYZDDDDEEEFFFAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBB')))
+    # arle.compress_file('filetest.txt', 'bytefile.txt')
+    # arle.decompress_file('bytefile.txt', 'control.txt')
+    # arle.compress_file('test.png', 'bytefile_png.txt')
+    # arle.decompress_file('bytefile_png.txt', 'control.png')
+    # arle.compress_file('Noize MC - Работа.mp3', 'bytefile_mp3.txt')
+    # arle.decompress_file('bytefile_mp3.txt', 'control.mp3')
+    # try:
+    #     arle.decompress_file('broken_bytefile.txt', 'broken_control.txt')
+    # except MagicMismatchError:
+    #     print(sys.exc_info()[0:2])
