@@ -12,7 +12,7 @@ except ImportError:
 
 class Arle(codec.Codec):
 
-    def __init__(self, run_length_limit=15):
+    def __init__(self, run_length_limit=16):
         self.run_length_limit = run_length_limit
 
     @property
@@ -74,7 +74,7 @@ class Arle(codec.Codec):
             elif nbytes > self.run_length_limit:
                 ndifferent = nbytes - self.run_length_limit
                 line = instream.read(ndifferent)
-                if len(line) < (ndifferent):
+                if len(line) < ndifferent:
                     raise codec.EOFError("Symbol expected")
                 outstream.write(line)
 
