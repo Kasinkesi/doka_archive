@@ -1,17 +1,23 @@
-# relative import:
-from ..codec import *
-# pycharm import:
-# from lib.codecs.codec import *
+import io
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+
+try:
+    from .. import codec
+except ImportError:
+    from lib.codecs import codec
 
 
-class Arle(Codec):
-    """ x from 2 to 254"""
-    def __init__(self, x=127):
-        self.x = x
+class Arle(codec.Codec):
+
+    def __init__(self, run_length_limit=15):
+        self.run_length_limit = run_length_limit
 
     @property
     def magic(self):
-        return b"arle"
+        return b"\xd0arle"
 
     def compress_stream(self, instream, outstream):
         while True:
@@ -23,7 +29,7 @@ class Arle(Codec):
 
             for s in list(line[1:]) + [None]:
                 if s == cur:
-                    if count == self.x:
+                    if count == self.run_length_limit:
                         outstream.write(bytes([count] + [cur]))
                         count = 0
                     elif sub_line:
@@ -32,16 +38,16 @@ class Arle(Codec):
                         sub_line = bytearray()
                     count += 1
                 else:
-                    if count > 1 and count < self.x + 1:
+                    if count > 1 and count < self.run_length_limit + 1:
                         outstream.write(bytes([count] + [cur]))
                         cur, count = s, 1
                     elif count == 255:
                         outstream.write(bytes([count]) + sub_line)
-                        count = self.x + 1
+                        count = self.run_length_limit + 1
                         sub_line = bytearray(bytes([cur]))
                     elif not sub_line:
                         sub_line.append(cur)
-                        count = self.x + 1
+                        count = self.run_length_limit + 1
                     elif sub_line:
                         sub_line.append(cur)
                         count += 1
@@ -60,16 +66,16 @@ class Arle(Codec):
                 # expected EOF
                 return
 
-            if nbytes <= self.x:
+            if nbytes <= self.run_length_limit:
                 symbol = instream.read(1)
                 if symbol == b'':
-                    raise EOFError("Symbol expected")
+                    raise codec.EOFError("Symbol expected")
                 outstream.write(symbol * nbytes)
-            elif nbytes > self.x:
-                ndifferent = nbytes - self.x
+            elif nbytes > self.run_length_limit:
+                ndifferent = nbytes - self.run_length_limit
                 line = instream.read(ndifferent)
                 if len(line) < (ndifferent):
-                    raise EOFError("Symbol expected")
+                    raise codec.EOFError("Symbol expected")
                 outstream.write(line)
 
 
@@ -98,8 +104,8 @@ if __name__ == '__main__':
     # arle.decompress_file('bytefile_png.txt', 'control.png')
     # arle.compress_file('Noize MC - Работа.mp3', 'bytefile_mp3.txt')
     # arle.decompress_file('bytefile_mp3.txt', 'control.mp3')
-    # try:
-    #     arle.decompress_file('broken_bytefile.txt', 'broken_control.txt')
-    # except MagicMismatchError as x:
-    #     print(x)
+    try:
+        arle.decompress_file('broken_bytefile.txt', 'broken_control.txt')
+    except codec.MagicMismatchError as x:
+        print(x)
     #     print(sys.exc_info()[0:2])

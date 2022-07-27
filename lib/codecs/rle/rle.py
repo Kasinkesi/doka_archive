@@ -1,15 +1,22 @@
-# relative import:
-from ..codec import *
-# pycharm import:
-# from lib.codecs.codec import *
+import io
+import os
+import sys
 
-class Rle(Codec):
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+
+try:
+    from .. import codec
+except ImportError:
+    from lib.codecs import codec
+
+
+class Rle(codec.Codec):
     def __init__(self):
         pass
 
     @property
     def magic(self):
-        return b"rle"
+        return b"\xd0rle"
 
     def compress_stream(self, instream, outstream):
         while True:
@@ -40,7 +47,7 @@ class Rle(Codec):
 
             symbol = instream.read(1)
             if symbol == b'':
-                raise EOFError("Symbol expected")
+                raise codec.EOFError("Symbol expected")
 
             outstream.write(symbol * nbytes)
 
@@ -72,4 +79,3 @@ if __name__ == '__main__':
     # except MagicMismatchError as x:
     #     print(x):
     #     print(sys.exc_info()[0:2])
-

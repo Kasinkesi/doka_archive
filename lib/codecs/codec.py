@@ -1,4 +1,4 @@
-import io, sys
+import io
 
 
 class DecodeError(Exception):
